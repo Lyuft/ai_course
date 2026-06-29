@@ -1,0 +1,60 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.nfs*
+
+# IDEs and editors
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Java and Maven build artifacts
+target/
+out/
+build/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/timing.properties
+
+# Logs and runtime files
+*.log
+logs/
+*.pid
+
+# Environment and local config
+.env
+.env.*
+!.env.example
+application-local.properties
+application-local.yml
+
+# Docker Compose local overrides and volumes
+docker-compose.override.yml
+compose.override.yml
+volumes/
+data/
+pgdata/
+
+# Temporary files
+tmp/
+temp/
+.cache/
