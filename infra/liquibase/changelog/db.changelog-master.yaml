@@ -1,0 +1,204 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-admin-panel-tables-and-test-data
+      author: ai-course
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_name
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_roles
+                    nullable: false
+
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: age
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: email
+            constraintName: uk_users_email
+
+        - createTable:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: user_role
+            columnNames: user_id, role_name
+            constraintName: pk_user_role
+
+        - addForeignKeyConstraint:
+            baseTableName: user_role
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_role_users
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: user_role
+            baseColumnNames: role_name
+            referencedTableName: roles
+            referencedColumnNames: role_name
+            constraintName: fk_user_role_roles
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_name
+                  value: ROLE_USER
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_name
+                  value: ROLE_ADMIN
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: first_name
+                  value: Test
+              - column:
+                  name: last_name
+                  value: User
+              - column:
+                  name: age
+                  valueNumeric: 25
+              - column:
+                  name: email
+                  value: testuser1@example.com
+              - column:
+                  name: password
+                  value: $2y$10$4c6gQGtVIpy1.mSugS5rEONNqZgP8O.XjdVjAToI3rkTy0CZoZUla
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: first_name
+                  value: Test
+              - column:
+                  name: last_name
+                  value: Manager
+              - column:
+                  name: age
+                  valueNumeric: 30
+              - column:
+                  name: email
+                  value: testuser2@example.com
+              - column:
+                  name: password
+                  value: $2y$10$pT6Xb1Dt8XSGulTV0AS//uBfGDY5C6yCSWO9Ma8rEnXeoREFWvABm
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: first_name
+                  value: Test
+              - column:
+                  name: last_name
+                  value: Admin
+              - column:
+                  name: age
+                  valueNumeric: 35
+              - column:
+                  name: email
+                  value: testuser3@example.com
+              - column:
+                  name: password
+                  value: $2y$10$bsUvbwBCYfO88KzpATVLwuF7D34Vq6oqWie7i9.2Gtc8XshqWvwHy
+
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role_name
+                  value: ROLE_USER
+
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 2
+              - column:
+                  name: role_name
+                  value: ROLE_USER
+
+        - insert:
+            tableName: user_role
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 3
+              - column:
+                  name: role_name
+                  value: ROLE_ADMIN
+
+        - sql:
+            sql: SELECT setval(pg_get_serial_sequence('admin_panel.users', 'id'), (SELECT MAX(id) FROM admin_panel.users));

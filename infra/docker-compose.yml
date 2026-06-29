@@ -1,0 +1,45 @@
+services:
+  postgres: # Контейнер с PostgreSQL для учебной локальной базы данных.
+    image: postgres:16-alpine # Образ PostgreSQL 16 на базе Alpine Linux.
+    container_name: ai-course-week2-postgres # Имя контейнера для `docker ps` и логов.
+    environment: # Переменные, которые официальный образ PostgreSQL читает при первом запуске.
+      POSTGRES_DB: ai_course # База данных, которая создаётся автоматически.
+      POSTGRES_USER: postgres # Пользователь базы данных.
+      POSTGRES_PASSWORD: postgres # Пароль пользователя базы данных.
+    ports: # Проброс порта с компьютера студента в контейнер.
+      - "5432:5432" # localhost:5432 на компьютере ведёт к 5432 внутри контейнера.
+    healthcheck: # Проверка, что PostgreSQL уже принимает подключения.
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ai_course"] # Команда проверки готовности БД.
+      interval: 5s # Как часто Docker запускает проверку.
+      timeout: 5s # Сколько Docker ждёт ответ проверки.
+      retries: 12 # Сколько неудачных проверок допускается.
+
+  liquibase: # Одноразовый контейнер, который применяет миграции к PostgreSQL.
+    image: liquibase/liquibase:4.29 # Образ Liquibase для запуска миграций.
+    container_name: ai-course-week2-liquibase # Имя контейнера для логов и диагностики.
+    entrypoint: ["/bin/sh", "-c"] # Запускаем shell, чтобы выполнить несколько команд подряд.
+    working_dir: /liquibase # Рабочий каталог внутри контейнера Liquibase.
+    depends_on: # Liquibase ждёт готовности PostgreSQL перед стартом.
+      postgres:
+        condition: service_healthy # Стартовать только после успешного healthcheck PostgreSQL.
+    volumes: # Подключаем файл миграций с компьютера внутрь контейнера.
+      - ./liquibase/changelog/db.changelog-master.yaml:/liquibase/db.changelog-master.yaml:ro # `ro` запрещает контейнеру менять файл.
+    command: # Команда выполняется один раз при запуске контейнера Liquibase.
+      - |
+        test -f /liquibase/db.changelog-master.yaml
+        &&
+        liquibase
+        --url=jdbc:postgresql://postgres:5432/ai_course
+        --username=postgres
+        --password=postgres
+        execute-sql --sql="CREATE SCHEMA IF NOT EXISTS admin_panel"
+        &&
+        liquibase
+        --url=jdbc:postgresql://postgres:5432/ai_course
+        --username=postgres
+        --password=postgres
+        --default-schema-name=admin_panel
+        --liquibase-schema-name=admin_panel
+        --changelog-file=db.changelog-master.yaml
+        update
+    restart: "no" # После применения миграций контейнер завершается и не перезапускается.
