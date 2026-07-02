@@ -46,7 +46,16 @@ services:
     image: sonarqube:lts-community # LTS-версия SonarQube Community Edition.
     container_name: ai-course-week2-sonarqube # Имя контейнера для `docker ps` и логов.
     ports: # Пробрасываем веб-интерфейс SonarQube на компьютер студента.
-      - "9000:9000" # SonarQube будет доступен по адресу http://localhost:9000. Вход по admin | admin. Затем UI предложит придумать новый пароль
+      - "9000:9000" # SonarQube будет доступен по адресу http://localhost:9000. Вход по admin | admin. Затем UI предложит придумать новый пароль.
     environment: # Настройки для упрощённого локального запуска.
       SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true" # Отключает bootstrap-проверки Elasticsearch для учебной среды.
+    volumes: # Сохраняем данные SonarQube между перезапусками контейнера.
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
     restart: unless-stopped # Автоматически перезапускать контейнер при сбое.
+
+volumes: # Именованные Docker volumes.
+  sonarqube_data: # База данных анализа, индексы и прочие рабочие данные.
+  sonarqube_extensions: # Установленные плагины SonarQube.
+  sonarqube_logs: # Логи SonarQube.stopped # Автоматически перезапускать контейнер при сбое.
