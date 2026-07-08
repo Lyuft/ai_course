@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css">
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+    <span class="navbar-text">
+        <strong th:text="${authUser.email}"></strong> with roles:
+        <span th:each="role : ${authUser.roles}" th:text="${role.roleName} + ' '"></span>
+    </span>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-link text-muted">Logout</button>
+    </form>
+</nav>
+
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-2">
+            <div class="nav flex-column nav-pills" role="tablist">
+                <a class="nav-link active" href="/admin">Admin</a>
+                <a class="nav-link" href="/user">User</a>
+            </div>
+        </div>
+        <div class="col-10">
+            <h2>Admin panel</h2>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#usersTable">Users table</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#addUser">Add user</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="usersTable">
+                    <div class="card">
+                        <div class="card-header">All users</div>
+                        <div class="card-body">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Id</th><th>First Name</th><th>Last Name</th><th>Age</th>
+                                    <th>Email</th><th>Role</th><th>Edit</th><th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody id="usersBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="addUser">
+                    <div class="card">
+                        <div class="card-header">Add new user</div>
+                        <div class="card-body text-center">
+                            <form id="addUserForm" style="width: 350px; margin: auto;">
+                                <input type="text" class="form-control" id="firstName" placeholder="First name" required>
+                                <input type="text" class="form-control" id="lastName" placeholder="Last name" required>
+                                <input type="number" class="form-control" id="age" placeholder="Age" required>
+                                <input type="text" class="form-control" id="email" placeholder="Email" required>
+                                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                                <select id="roleSelect" class="form-control" multiple size="2" required>
+                                    <option value="ROLE_USER">USER</option>
+                                    <option value="ROLE_ADMIN">ADMIN</option>
+                                </select>
+                                <button type="submit" class="btn btn-success mt-2">Add new user</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5>Edit user</h5><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button></div>
+            <div class="modal-body text-center">
+                <form id="editForm">
+                    <input type="hidden" id="editId">
+                    <input type="text" class="form-control" id="editFirstName" required>
+                    <input type="text" class="form-control" id="editLastName" required>
+                    <input type="number" class="form-control" id="editAge" required>
+                    <input type="text" class="form-control" id="editEmail" required>
+                    <input type="password" class="form-control" id="editPassword">
+                    <select id="editRoleSelect" class="form-control" multiple size="2" required>
+                        <option value="ROLE_USER">USER</option>
+                        <option value="ROLE_ADMIN">ADMIN</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateUser()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><h5>Delete user</h5><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button></div>
+            <div class="modal-body text-center">
+                <form id="deleteForm">
+                    <input type="hidden" id="deleteId">
+                    <input type="text" class="form-control" id="deleteFirstName" disabled>
+                    <input type="text" class="form-control" id="deleteLastName" disabled>
+                    <input type="number" class="form-control" id="deleteAge" disabled>
+                    <input type="text" class="form-control" id="deleteEmail" disabled>
+                    <select id="deleteRoleSelect" class="form-control" multiple size="2" disabled>
+                        <option value="ROLE_USER">USER</option>
+                        <option value="ROLE_ADMIN">ADMIN</option>
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="deleteUser()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.0.0/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.0.0-2/js/bootstrap.min.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Page</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css">
+</head>
+<body>
+
+<nav class="navbar navbar-dark bg-dark">
+    <span class="navbar-text">
+        <strong th:text="${authUser.email}"></strong> with roles:
+        <span th:each="role : ${authUser.roles}" th:text="${role.roleName} + ' '"></span>
+    </span>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-link text-muted">Logout</button>
+    </form>
+</nav>
+
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-2">
+            <div class="nav flex-column nav-pills">
+                <a class="nav-link active" href="/user">User</a>
+            </div>
+        </div>
+        <div class="col-10">
+            <h2>User information-page</h2>
+            <div class="card">
+                <div class="card-header">About user</div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Id</th><th>First Name</th><th>Last Name</th><th>Age</th><th>Email</th><th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td th:text="${authUser.id}"></td>
+                            <td th:text="${authUser.firstName}"></td>
+                            <td th:text="${authUser.lastName}"></td>
+                            <td th:text="${authUser.age}"></td>
+                            <td th:text="${authUser.email}"></td>
+                            <td>
+                                <span th:each="role : ${authUser.roles}" th:text="${role.roleName} + ' '"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
