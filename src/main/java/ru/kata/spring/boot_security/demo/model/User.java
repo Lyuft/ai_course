@@ -18,7 +18,7 @@ public class User implements UserDetails {
     private Long id;
 
     @NotEmpty(message = "Имя не должно быть пустым")
-    @Size(min = 2, max = 30, message = "Имя должно быть от 2 до 100 символов") // Keep error messages matching specs if possible, but 2-30 or 2-100. Specs say: "Имя должно быть от 2 до 100 символов" for entity but "Name wrong size" for DTO and "длина 2-30" in other tables. Let's make sure it matches specs!
+    @Size(min = 2, max = 30, message = "Имя должно быть от 2 до 100 символов")
     @Column(name = "first_name", nullable = false, length = 100)
     private String firstName;
 
@@ -40,7 +40,7 @@ public class User implements UserDetails {
     private String email;
 
     @NotEmpty(message = "Пароль не должен быть пустым")
-    @Column(name = "password", nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 20)
     private String password;
 
     @NotEmpty(message = "Не выбрана ни одна роль")
@@ -53,6 +53,7 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     public User() {
+        // Required by framework for deserialization/persistence
     }
 
     public Long getId() {
@@ -115,12 +116,12 @@ public class User implements UserDetails {
     // UserDetails implementations
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
+        return new HashSet<>(roles);
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return this.email;
     }
 
     @Override

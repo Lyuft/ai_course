@@ -30,6 +30,7 @@ public class UserDTO {
     private Set<RoleDTO> roles;
 
     public UserDTO() {
+        // Required by framework for deserialization
     }
 
     public Long getId() {

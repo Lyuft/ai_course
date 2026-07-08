@@ -20,6 +20,7 @@ import java.util.List;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+    private static final String LOGIN_URL = "/auth/login";
     private final UserDetailsService userDetailsService;
     private final SuccessUserHandler successUserHandler;
 
@@ -34,20 +35,20 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/error", "/js/**").permitAll()
+                        .requestMatchers(LOGIN_URL, "/error", "/js/**").permitAll()
                         .requestMatchers("/admin", "/users/**").hasRole("ADMIN")
                         .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/auth/login")
+                        .loginPage(LOGIN_URL)
                         .loginProcessingUrl("/process_login")
                         .successHandler(successUserHandler)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/auth/login")
+                        .logoutSuccessUrl(LOGIN_URL)
                         .permitAll()
                 );
         return http.build();
